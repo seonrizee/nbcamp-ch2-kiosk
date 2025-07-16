@@ -10,13 +10,13 @@ public class Main {
             boolean isRunning = true;
             while (isRunning) {
 
-                System.out.println("롯데리아");
-                System.out.println("메뉴를 선택해주세요.");
-                System.out.println("0. 종료");
+                displayInfo("롯데리아");
+                displayInfo("메뉴를 선택해주세요.");
+                displayInfo("0. 종료");
 
                 int cmd = Integer.parseInt(sc.nextLine());
                 if (cmd == 0) {
-                    System.out.println("키오스크를 종료합니다.");
+                    displayInfo("키오스크를 종료합니다.");
                     isRunning = false;
                 } else {
                     operateMenu(cmd);
@@ -28,7 +28,11 @@ public class Main {
     }
 
     public static void operateMenu(int cmd) {
-        System.out.println(cmd + "번 메뉴를 선택했습니다.");
+        displayInfo(cmd + "번 메뉴를 선택했습니다.");
+    }
+
+    public static void displayInfo(String str) {
+        System.out.println("KIOSK:::: " + str);
     }
 
 }
