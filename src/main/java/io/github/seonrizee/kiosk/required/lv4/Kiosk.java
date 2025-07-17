@@ -14,31 +14,24 @@ public class Kiosk {
     public void start() {
 
         try (Scanner sc = new Scanner(System.in)) {
-            boolean isRunning = true;
-            while (isRunning) {
+            while (true) {
 
                 System.out.println();
                 displayLine();
                 displayInfo("Welcome to Five Guys");
                 displayTitle("MAIN");
-                // 상위 메뉴 출력
-                displayMenu(menuList);
+                displayMenuList(menuList);
+
                 displayInfo("0. 종료");
                 displayLine();
                 displayInput("원하는 카테고리 또는 기능의 번호를 입력해주세요.: ");
 
-                try {
-                    int selMenuIdx = Integer.parseInt(sc.nextLine());
-                    if (selMenuIdx == 0) {
-                        displayInfo("키오스크를 종료합니다.");
-                        isRunning = false;
-                    } else {
-                        showSubMenu(sc, selMenuIdx);
-                    }
-                } catch (NumberFormatException e) {
-                    displayError("숫자 형식으로 입력해주세요. ");
-                } catch (IndexOutOfBoundsException e) {
-                    displayError("잘못된 번호를 입력하셨습니다. 키오스크의 번호를 입력해주세요.");
+                int selectedMenuIdx = getUserInput(sc, menuList.size());
+                if (selectedMenuIdx == 0) {
+                    displayInfo("키오스크를 종료합니다.");
+                    break;
+                } else {
+                    showSubMenu(sc, selectedMenuIdx);
                 }
 
             }
@@ -46,57 +39,61 @@ public class Kiosk {
         }
     }
 
-    private void showSubMenu(Scanner sc, int selMenuIdx) {
-
-        Menu selectedMenu = menuList.get(selMenuIdx - 1);
-        List<MenuItem> menuItemList = selectedMenu.getMenuItems();
-
-        System.out.println();
-        displayLine();
-        displayTitle(selectedMenu.getCategory());
-        // 상위 메뉴 출력
-        displayMenuItems(menuItemList);
-
-        displayInfo("0. 뒤로 가기");
-        displayLine();
-        displayInput("원하는 메뉴의 번호를 입력해주세요.: ");
-
-        boolean isRunning = true;
-        while (isRunning) {
+    private int getUserInput(Scanner sc, int maxValidIdx) {
+        while (true) {
             try {
-                int selectedMenuItemIdx = Integer.parseInt(sc.nextLine());
-                if (selectedMenuItemIdx == 0) {
-                    displayInfo("이전 화면으로 돌아갑니다.");
-                    isRunning = false;
-                } else {
-                    MenuItem selectedItem = menuItemList.get(selectedMenuItemIdx - 1);
-                    processOrder(selectedMenuItemIdx, selectedItem);
-                    isRunning = false;
+                int input = Integer.parseInt(sc.nextLine());
+                if (input < 0 || input > maxValidIdx) {
+                    throw new IndexOutOfBoundsException();
                 }
+                return input;
             } catch (NumberFormatException e) {
-                displayError("숫자 형식으로 입력해주세요. ");
+                displayError("숫자 형식으로 입력해주세요.");
             } catch (IndexOutOfBoundsException e) {
                 displayError("잘못된 번호를 입력하셨습니다. 키오스크의 번호를 입력해주세요.");
             }
         }
+    }
 
+    private void showSubMenu(Scanner sc, int selectedMenuIdx) {
+
+        Menu selectedMenu = menuList.get(selectedMenuIdx - 1);
+        List<MenuItem> menuItemList = selectedMenu.getMenuItems();
+
+        while (true) {
+            System.out.println();
+            displayLine();
+            displayTitle(selectedMenu.getCategory());
+            displayMenuItems(menuItemList);
+
+            displayInfo("0. 뒤로 가기");
+            displayLine();
+            displayInput("원하는 메뉴의 번호를 입력해주세요.: ");
+
+            int selectedItemIdx = getUserInput(sc, menuItemList.size());
+            if (selectedItemIdx == 0) {
+                displayInfo("이전 화면으로 돌아갑니다.");
+                break;
+            } else {
+                MenuItem selectedItem = menuItemList.get(selectedItemIdx - 1);
+                processOrder(selectedItemIdx, selectedItem);
+            }
+        }
+    }
+
+    public void processOrder(int menuItemIdx, MenuItem menuItem) {
+        displayInfo(menuItemIdx + "번 " + menuItem.getName() + "를 주문하셨습니다. 결제 완료됐습니다. 맛있게 드세요!");
+    }
+
+    public void displayMenuList(List<Menu> menuList) {
+        for (int idx = 0; idx < menuList.size(); idx++) {
+            displayInfo(idx + 1 + ". " + menuList.get(idx).getCategory());
+        }
     }
 
     private void displayMenuItems(List<MenuItem> menuItems) {
         for (int idx = 0; idx < menuItems.size(); idx++) {
             displayMenuItem(idx + 1, menuItems.get(idx));
-        }
-    }
-
-
-    public void processOrder(int selItemIdx, MenuItem selectedItem) {
-        displayInfo(selItemIdx + "번 " + selectedItem.getName() + "를 주문하셨습니다. 결제 완료됐습니다. 맛있게 드세요!");
-    }
-
-
-    public void displayMenu(List<Menu> menuList) {
-        for (int idx = 0; idx < menuList.size(); idx++) {
-            displayInfo(idx + 1 + ". " + menuList.get(idx).getCategory());
         }
     }
 
@@ -114,7 +111,7 @@ public class Kiosk {
     }
 
     public void displayError(String msg) {
-        System.out.println("KIOSK_ERROR:::: " + msg);
+        System.out.print("KIOSK_ERROR:::: " + msg + ":");
     }
 
     public void displayInput(String msg) {
