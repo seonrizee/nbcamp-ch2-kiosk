@@ -81,11 +81,11 @@ public class Kiosk {
         }
     }
 
-    public void processOrder(int menuItemIdx, MenuItem menuItem) {
+    private void processOrder(int menuItemIdx, MenuItem menuItem) {
         printInfo(menuItemIdx + "번 " + menuItem.getName() + "를 주문하셨습니다. 결제 완료됐습니다. 맛있게 드세요!");
     }
 
-    public void displayMenuList(List<Menu> menuList) {
+    private void displayMenuList(List<Menu> menuList) {
         for (int idx = 0; idx < menuList.size(); idx++) {
             printInfo(idx + 1 + ". " + menuList.get(idx).getCategory());
         }
@@ -97,28 +97,28 @@ public class Kiosk {
         }
     }
 
-    public void displayMenuItem(int idx, MenuItem menuItem) {
+    private void displayMenuItem(int idx, MenuItem menuItem) {
         String format = "KIOSK:::: %d. %-16s | %,6d원 | %s\n";
         System.out.printf(format, idx, menuItem.getName(), menuItem.getPrice(), menuItem.getDesc());
     }
 
-    public void printTitle(String msg) {
+    private void printTitle(String msg) {
         System.out.println("KIOSK:::: [ " + msg + " MENU ] ");
     }
 
-    public void printInfo(String msg) {
+    private void printInfo(String msg) {
         System.out.println("KIOSK:::: " + msg);
     }
 
-    public void printError(String msg) {
+    private void printError(String msg) {
         System.out.print("KIOSK_ERROR:::: " + msg + ":");
     }
 
-    public void printInput(String msg) {
+    private void printInput(String msg) {
         System.out.print("KIOSK:::: " + msg);
     }
 
-    public void printLine() {
+    private void printLine() {
         System.out.println("KIOSK:::: ====================================");
     }
 }
