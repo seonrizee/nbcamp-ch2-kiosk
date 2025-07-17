@@ -17,6 +17,6 @@ public class Menu {
     }
 
     public List<MenuItem> getMenuItems() {
-        return menuItems;
+        return List.copyOf(menuItems);
     }
 }
