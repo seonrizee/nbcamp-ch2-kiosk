@@ -35,7 +35,7 @@ public class Cart {
 
 
     public List<CartItem> getCartItemList() {
-        return List.copyOf(cartItems.values().stream().toList());
+        return List.copyOf(cartItems.values());
     }
 
     public boolean isCartEmpty() {
