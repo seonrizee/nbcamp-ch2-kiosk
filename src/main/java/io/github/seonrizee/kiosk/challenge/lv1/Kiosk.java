@@ -13,6 +13,7 @@ public class Kiosk {
 
     public void start() {
 
+        Cart cart = new Cart();
         try (Scanner sc = new Scanner(System.in)) {
             while (true) {
 
@@ -31,7 +32,7 @@ public class Kiosk {
                     printInfo("키오스크를 종료합니다.");
                     break;
                 } else {
-                    showSubMenu(sc, selectedMenuIdx);
+                    showSubMenu(sc, selectedMenuIdx, cart);
                 }
 
             }
@@ -55,7 +56,7 @@ public class Kiosk {
         }
     }
 
-    private void showSubMenu(Scanner sc, int selectedMenuIdx) {
+    private void showSubMenu(Scanner sc, int selectedMenuIdx, Cart cart) {
 
         Menu selectedMenu = menuList.get(selectedMenuIdx - 1);
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
@@ -76,13 +77,15 @@ public class Kiosk {
                 break;
             } else {
                 MenuItem selectedItem = menuItemList.get(selectedItemIdx - 1);
-                processOrder(selectedItemIdx, selectedItem);
+                processOrder(cart, selectedItemIdx, selectedItem);
             }
         }
     }
 
-    private void processOrder(int menuItemIdx, MenuItem menuItem) {
+    private void processOrder(Cart cart, int menuItemIdx, MenuItem menuItem) {
         printInfo(menuItemIdx + "번 " + menuItem.getName() + "를 주문하셨습니다. 결제 완료됐습니다. 맛있게 드세요!");
+        cart.addItem(menuItem);
+        System.out.println("cart = " + cart);
     }
 
     private void displayMenuList(List<Menu> menuList) {

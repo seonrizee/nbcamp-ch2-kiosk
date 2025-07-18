@@ -26,4 +26,12 @@ public class MenuItem {
         return desc;
     }
 
+    @Override
+    public String toString() {
+        return "MenuItem{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", desc='" + desc + '\'' +
+                '}';
+    }
 }
