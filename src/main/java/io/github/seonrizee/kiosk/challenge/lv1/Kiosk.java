@@ -26,7 +26,7 @@ public class Kiosk {
                 int orderMinValidIdx = menuList.size();
                 int orderMaxValidIdx = orderMinValidIdx + 2;
                 if (!cart.isCartEmpty()) {
-                    showOrderMenu(sc, cart, orderMinValidIdx);
+                    showOrderMenu(orderMinValidIdx);
                 }
                 printInfo("0. 종료");
                 printLine();
@@ -51,7 +51,7 @@ public class Kiosk {
     }
 
 
-    private void showOrderMenu(Scanner sc, Cart cart, int minValidIdx) {
+    private void showOrderMenu(int minValidIdx) {
         printTitle("ORDER MENU");
         printInfo(minValidIdx + 1 + ". Orders   | 장바구니를 확인 후 주문합니다.");
         printInfo(minValidIdx + 2 + ". Cancel   | 진행중인 주문을 취소합니다.");
@@ -59,7 +59,7 @@ public class Kiosk {
 
     private boolean confirmOrder(Scanner sc) {
         printInfo("1. 주문");
-        printInfo("2. 돌아가기");
+        printInfo("2. 뒤로 가기");
         printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
 
         int selection = getUserInput(sc, 1, 2);
