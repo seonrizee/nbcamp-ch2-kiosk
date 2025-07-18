@@ -26,9 +26,9 @@ public class Main {
         ));
 
         Menu frieMenu = new Menu("FRIES", List.of(
-                new MenuItem("LITTLE", 6900, "작은 사이즈"),
-                new MenuItem("REGULAR", 8900, "중간 사이즈"),
-                new MenuItem("LARGE", 10900, "큰 사이즈")
+                new MenuItem("FRIES LITTLE", 6900, "파이브가이즈 스타일 프라이즈 작은 사이즈"),
+                new MenuItem("FRIES REGULAR", 8900, "파이브가이즈 스타일 프라이즈 중간 사이즈"),
+                new MenuItem("FRIES LARGE", 10900, "파이브가이즈 스타일 프라이즈 큰 사이즈")
         ));
 
         return List.of(burgerMenu, drinkMenu, frieMenu);

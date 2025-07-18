@@ -1,6 +1,7 @@
 package io.github.seonrizee.kiosk.challenge.lv1;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Cart {
@@ -30,8 +31,17 @@ public class Cart {
         return sumCartPrice;
     }
 
-    public Map<String, CartItem> getCartItems() {
-        return Map.copyOf(cartItems);
+    public void clearCart() {
+        cartItems.clear();
+    }
+
+
+    public List<CartItem> getCartItemList() {
+        return List.copyOf(cartItems.values().stream().toList());
+    }
+
+    public boolean isCartEmpty() {
+        return cartItems.isEmpty();
     }
 
     @Override

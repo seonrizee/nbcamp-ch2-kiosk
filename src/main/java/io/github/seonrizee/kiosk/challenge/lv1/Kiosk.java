@@ -23,16 +23,26 @@ public class Kiosk {
                 printTitle("MAIN MENU");
                 displayMenuList(menuList);
 
+                int orderMinValidIdx = menuList.size();
+                int orderMaxValidIdx = orderMinValidIdx + 2;
+                if (!cart.isCartEmpty()) {
+                    showOrderMenu(sc, cart, orderMinValidIdx);
+                }
                 printInfo("0. 종료");
                 printLine();
                 printInput("원하는 카테고리 또는 기능의 번호를 입력해주세요.: ");
 
-                int selectedMenuIdx = getUserInput(sc, 0, menuList.size());
+                // TODO 카트가 비어있을 떄와 그렇지 않을 때의 입력범위 정리하기
+                int selectedMenuIdx = getUserInput(sc, 0, orderMaxValidIdx);
                 if (selectedMenuIdx == 0) {
                     printInfo("키오스크를 종료합니다.");
                     break;
                 } else {
-                    showSubMenu(sc, selectedMenuIdx, cart);
+                    if (!cart.isCartEmpty() && selectedMenuIdx > orderMinValidIdx) {
+                        operateOrder(sc, cart);
+                    } else if (selectedMenuIdx <= orderMinValidIdx) {
+                        showSubMenu(sc, selectedMenuIdx, cart);
+                    }
                 }
 
             }
@@ -40,19 +50,31 @@ public class Kiosk {
         }
     }
 
-    private int getUserInput(Scanner sc, int minValidIdx, int maxValidIdx) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(sc.nextLine());
-                if (input < minValidIdx || input > maxValidIdx) {
-                    throw new IndexOutOfBoundsException();
-                }
-                return input;
-            } catch (NumberFormatException e) {
-                printError("숫자 형식으로 입력해주세요.");
-            } catch (IndexOutOfBoundsException e) {
-                printError("잘못된 번호를 입력하셨습니다. 키오스크의 번호를 입력해주세요.");
-            }
+
+    private void showOrderMenu(Scanner sc, Cart cart, int minValidIdx) {
+        printTitle("ORDER MENU");
+        printInfo(minValidIdx + 1 + ". Orders   | 장바구니를 확인 후 주문합니다.");
+        printInfo(minValidIdx + 2 + ". Cancel   | 진행중인 주문을 취소합니다.");
+    }
+
+    private boolean confirmOrder(Scanner sc) {
+        printInfo("1. 주문");
+        printInfo("2. 돌아가기");
+        printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
+
+        int selection = getUserInput(sc, 1, 2);
+        return selection == 1;
+    }
+
+    private void operateOrder(Scanner sc, Cart cart) {
+        showCartStatus(cart);
+        boolean isConfirmed = confirmOrder(sc);
+        if (isConfirmed) {
+            String formattedPrice = String.format("%,d", cart.getSumCartPrice());
+            printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
+            cart.clearCart();
+        } else {
+            printInfo("주문이 취소되었습니다. 메뉴로 돌아갑니다.");
         }
     }
 
@@ -78,7 +100,7 @@ public class Kiosk {
             }
 
             MenuItem selectedItem = menuItemList.get(selectedItemIdx - 1);
-            boolean isConfirmed = confirmAddToCart(sc, cart, selectedItemIdx, selectedItem);
+            boolean isConfirmed = confirmAddToCart(sc, selectedItemIdx, selectedItem);
             if (isConfirmed) {
                 addItemToCart(cart, selectedItem);
             }
@@ -87,12 +109,13 @@ public class Kiosk {
 
     private void showCartStatus(Cart cart) {
         printTitle("CART STATUS");
-        displayCartItems(cart.getCartItems().values().stream().toList());
+        displayCartItems(cart.getCartItemList());
         String formattedPrice = String.format("%,d", cart.getSumCartPrice());
+        printLine();
         printInfo("총 가격: " + formattedPrice + "원");
     }
 
-    private boolean confirmAddToCart(Scanner sc, Cart cart, int selectedItemIdx, MenuItem selectedItem) {
+    private boolean confirmAddToCart(Scanner sc, int selectedItemIdx, MenuItem selectedItem) {
         displayMenuItem(selectedItemIdx, selectedItem);
         printInfo("1. 확인");
         printInfo("2. 취소");
@@ -106,6 +129,22 @@ public class Kiosk {
         printInfo(selectedItem.getName() + "이(가) 장바구니에 추가되었습니다.");
         cart.addItem(selectedItem);
         showCartStatus(cart);
+    }
+
+    private int getUserInput(Scanner sc, int minValidIdx, int maxValidIdx) {
+        while (true) {
+            try {
+                int input = Integer.parseInt(sc.nextLine());
+                if (input < minValidIdx || input > maxValidIdx) {
+                    throw new IndexOutOfBoundsException();
+                }
+                return input;
+            } catch (NumberFormatException e) {
+                printError("숫자 형식으로 입력해주세요.");
+            } catch (IndexOutOfBoundsException e) {
+                printError("잘못된 번호를 입력하셨습니다. 키오스크의 번호를 입력해주세요.");
+            }
+        }
     }
 
     private void displayCartItems(List<CartItem> cartItems) {
