@@ -7,8 +7,6 @@ import java.util.Map;
 public class Cart {
 
     private final Map<String, CartItem> cartItems = new LinkedHashMap<>();
-    private int sumCartPrice;
-
 
     public void addItem(MenuItem menuItem) {
 
@@ -23,12 +21,12 @@ public class Cart {
 
     }
 
-    public int getSumCartPrice() {
-        sumCartPrice = cartItems.values()
+    public int getTotalPrice() {
+        return cartItems.values()
                 .stream()
                 .mapToInt(CartItem::getSumItemPrice)
                 .sum();
-        return sumCartPrice;
+
     }
 
     public void clearCart() {
@@ -42,13 +40,5 @@ public class Cart {
 
     public boolean isCartEmpty() {
         return cartItems.isEmpty();
-    }
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "cartItems=" + cartItems +
-                ", sumCartPrice=" + sumCartPrice +
-                '}';
     }
 }

@@ -70,7 +70,7 @@ public class Kiosk {
         showCartStatus(cart);
         boolean isConfirmed = confirmOrder(sc);
         if (isConfirmed) {
-            String formattedPrice = String.format("%,d", cart.getSumCartPrice());
+            String formattedPrice = String.format("%,d", cart.getTotalPrice());
             printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
             cart.clearCart();
         } else {
@@ -110,7 +110,7 @@ public class Kiosk {
     private void showCartStatus(Cart cart) {
         printTitle("CART STATUS");
         displayCartItems(cart.getCartItemList());
-        String formattedPrice = String.format("%,d", cart.getSumCartPrice());
+        String formattedPrice = String.format("%,d", cart.getTotalPrice());
         printLine();
         printInfo("총 가격: " + formattedPrice + "원");
     }
