@@ -8,17 +8,18 @@ public class CartItem {
 
     public CartItem(MenuItem item) {
         this.item = item;
-        this.sumItemPrice = calTotalPrice();
+        this.quantity = 1;
+        this.sumItemPrice = item.getPrice();
     }
 
     public void increaseQuantity() {
         this.quantity += 1;
-        this.sumItemPrice = calTotalPrice();
+        this.sumItemPrice += item.getPrice();
     }
 
     public void decreaseQuantity() {
         this.quantity -= 1;
-        this.sumItemPrice = calTotalPrice();
+        this.sumItemPrice -= item.getPrice();
     }
 
     public MenuItem getItem() {
