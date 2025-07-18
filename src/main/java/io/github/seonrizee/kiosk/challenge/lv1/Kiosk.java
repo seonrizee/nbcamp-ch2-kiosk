@@ -20,7 +20,7 @@ public class Kiosk {
                 System.out.println();
                 printLine();
                 printInfo("Welcome to Five Guys");
-                printTitle("MAIN");
+                printTitle("MAIN MENU");
                 displayMenuList(menuList);
 
                 printInfo("0. 종료");
@@ -64,7 +64,7 @@ public class Kiosk {
         while (true) {
             System.out.println();
             printLine();
-            printTitle(selectedMenu.getCategory());
+            printTitle(selectedMenu.getCategory() + " MENU");
             displayMenuItems(menuItemList);
 
             printInfo("0. 뒤로 가기");
@@ -80,9 +80,16 @@ public class Kiosk {
             MenuItem selectedItem = menuItemList.get(selectedItemIdx - 1);
             boolean isConfirmed = confirmAddToCart(sc, cart, selectedItemIdx, selectedItem);
             if (isConfirmed) {
-                processOrder(cart, selectedItem);
+                addItemToCart(cart, selectedItem);
             }
         }
+    }
+
+    private void showCartStatus(Cart cart) {
+        printTitle("CART STATUS");
+        displayCartItems(cart.getCartItems().values().stream().toList());
+        String formattedPrice = String.format("%,d", cart.getSumCartPrice());
+        printInfo("총 가격: " + formattedPrice + "원");
     }
 
     private boolean confirmAddToCart(Scanner sc, Cart cart, int selectedItemIdx, MenuItem selectedItem) {
@@ -95,17 +102,23 @@ public class Kiosk {
         return selection == 1;
     }
 
-    private void processOrder(Cart cart, MenuItem selectedItem) {
+    private void addItemToCart(Cart cart, MenuItem selectedItem) {
         printInfo(selectedItem.getName() + "이(가) 장바구니에 추가되었습니다.");
         cart.addItem(selectedItem);
-        // TODO 갱신된 장바구니 보여주기
-//        showCurrentCart(cart);
-//        System.out.println("cart = " + cart);
+        showCartStatus(cart);
     }
 
-//    private void showCurrentCart(Cart cart) {
-//
-//    }
+    private void displayCartItems(List<CartItem> cartItems) {
+        for (int idx = 0; idx < cartItems.size(); idx++) {
+            displayCartItem(idx + 1, cartItems.get(idx));
+        }
+    }
+
+    private void displayCartItem(int idx, CartItem cartItem) {
+        String format = "KIOSK:::: %d. %-16s | %3d개 | %,6d원\n";
+        System.out.printf(format, idx, cartItem.getItem().getName(), cartItem.getQuantity(),
+                cartItem.getSumItemPrice());
+    }
 
     private void displayMenuList(List<Menu> menuList) {
         for (int idx = 0; idx < menuList.size(); idx++) {
@@ -125,7 +138,7 @@ public class Kiosk {
     }
 
     private void printTitle(String msg) {
-        System.out.println("KIOSK:::: [ " + msg + " MENU ] ");
+        System.out.println("KIOSK:::: [ " + msg + " ] ");
     }
 
     private void printInfo(String msg) {

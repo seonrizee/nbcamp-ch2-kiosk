@@ -22,7 +22,15 @@ public class CartItem {
         this.sumItemPrice -= item.getPrice();
     }
 
-    public int getTotalPrice() {
+    public MenuItem getItem() {
+        return item;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public int getSumItemPrice() {
         return sumItemPrice;
     }
 
