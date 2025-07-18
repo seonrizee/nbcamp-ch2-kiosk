@@ -22,20 +22,8 @@ public class CartItem {
         this.sumItemPrice -= item.getPrice();
     }
 
-    public MenuItem getItem() {
-        return item;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
     public int getTotalPrice() {
         return sumItemPrice;
-    }
-
-    public int calTotalPrice() {
-        return quantity * item.getPrice();
     }
 
     @Override
