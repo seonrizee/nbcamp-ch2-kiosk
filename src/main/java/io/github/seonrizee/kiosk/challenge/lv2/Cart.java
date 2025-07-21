@@ -12,11 +12,37 @@ public class Cart {
 
         String itemName = menuItem.getName();
         CartItem cartItem = cartItems.get(itemName);
-        if (cartItem != null) {
-            cartItem.increaseQuantity();
-        } else {
+
+        if (cartItem == null) {
             cartItem = new CartItem(menuItem);
             cartItems.put(itemName, cartItem);
+            return;
+        }
+
+        cartItem.increaseQuantity();
+    }
+
+    public void removeItem(MenuItem menuItem) {
+        String itemName = menuItem.getName();
+
+        if (cartItems.remove(itemName) == null) {
+            System.out.println("장바구니에 없는 메뉴입니다.");
+        }
+
+    }
+
+    public void decreaseItem(MenuItem menuItem) {
+        String itemName = menuItem.getName();
+        CartItem cartItem = cartItems.get(itemName);
+
+        if (cartItem == null) {
+            System.out.println("장바구니에 없는 메뉴입니다.");
+            return;
+        }
+
+        cartItem.decreaseQuantity();
+        if (cartItem.getQuantity() == 0) {
+            removeItem(menuItem);
         }
 
     }
@@ -32,7 +58,6 @@ public class Cart {
     public void clearCart() {
         cartItems.clear();
     }
-
 
     public List<CartItem> getCartItemList() {
         return List.copyOf(cartItems.values());

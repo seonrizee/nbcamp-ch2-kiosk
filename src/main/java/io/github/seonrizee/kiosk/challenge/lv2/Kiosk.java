@@ -1,7 +1,6 @@
 package io.github.seonrizee.kiosk.challenge.lv2;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Kiosk {
@@ -18,7 +17,7 @@ public class Kiosk {
         try (Scanner sc = new Scanner(System.in)) {
             while (true) {
 
-                System.out.println();
+                printNewLine();
                 printLine();
                 printInfo("Welcome to Five Guys");
                 printTitle("MAIN MENU");
@@ -39,8 +38,10 @@ public class Kiosk {
                     printInfo("키오스크를 종료합니다.");
                     break;
                 } else {
-                    if (!cart.isCartEmpty() && selectedMenuIdx > orderMinValidIdx) {
-                        processCheckout(sc, cart);
+                    if (!cart.isCartEmpty() && selectedMenuIdx == 4) {
+                        handleCheckoutOrder(sc, cart);
+                    } else if (!cart.isCartEmpty() && selectedMenuIdx == 5) {
+                        showCartUpdateMenu(sc, cart);
                     } else if (selectedMenuIdx <= orderMinValidIdx) {
                         showSubMenu(sc, selectedMenuIdx, cart);
                     }
@@ -55,32 +56,85 @@ public class Kiosk {
     private void showOrderMenu(int minValidIdx) {
         printTitle("ORDER MENU");
         printInfo(minValidIdx + 1 + ". Orders   | 장바구니를 확인 후 주문합니다.");
-        printInfo(minValidIdx + 2 + ". Cancel   | 진행중인 주문을 취소합니다.");
+        printInfo(minValidIdx + 2 + ". Edit     | 장바구니를 확인 후 수정합니다.");
     }
 
-    private boolean confirmCart(Scanner sc) {
-        printInfo("1. 주문");
-        printInfo("2. 뒤로 가기");
-        printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
+    private void handleCheckoutOrder(Scanner sc, Cart cart) {
+        while (true) {
+            if (cart.isCartEmpty()) {
+                return;
+            }
 
-        int selection = getUserInput(sc, 1, 2);
-        return selection == 1;
-    }
+            showCartStatus(cart);
+            printInfo("1. 주문");
+            printInfo("0. 뒤로 가기");
+            printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
 
-    private void processCheckout(Scanner sc, Cart cart) {
-        showCartStatus(cart);
-        boolean isCartConfirmed = confirmCart(sc);
-        if (isCartConfirmed) {
-            Optional<DiscountType> selectedDcType = confirmDiscount(sc);
-            if (selectedDcType.isPresent()) {
-                operateOrder(cart, selectedDcType.get());
+            int selectedIdx = getUserInput(sc, 0, 1);
+
+            if (selectedIdx == 1) {
+                Discount selectedDcType = confirmDiscount(sc);
+                if (selectedDcType == null) {
+                    return;
+                }
+                operateOrder(cart, selectedDcType);
+            } else if (selectedIdx == 0) {
                 return;
             }
         }
-        printInfo("주문이 취소되었습니다. 메뉴로 돌아갑니다.");
     }
 
-    private void operateOrder(Cart cart, DiscountType dcType) {
+    private void showCartUpdateMenu(Scanner sc, Cart cart) {
+        while (true) {
+            if (cart.isCartEmpty()) {
+                printInfo("장바구니에 남은 메뉴가 없어 처음으로 돌아갑니다.");
+                return;
+            }
+
+            showCartStatus(cart);
+            printInfo("0. 뒤로 가기");
+            printInput("선택하신 메뉴를 확인하시고 수정하고 싶은 메뉴의 번호를 입력해주세요.: ");
+
+            int selectedIdx = getUserInput(sc, 0, cart.getCartItemList().size());
+            if (selectedIdx == 0) {
+                return;
+            }
+
+            updateCart(sc, cart, selectedIdx, cart.getCartItemList().get(selectedIdx - 1));
+        }
+    }
+
+    private void updateCart(Scanner sc, Cart cart, int selection, CartItem cartItem) {
+
+        displayCartItem(selection, cartItem);
+        printInfo("1. 메뉴 수량 증가");
+        printInfo("2. 메뉴 수량 감소");
+        printInfo("3. 메뉴 삭제");
+        printInfo("0. 뒤로 가기");
+        printInput("원하는 기능의 메뉴를 고르세요.: ");
+
+        int selectedIdx = getUserInput(sc, 0, 3);
+        if (selectedIdx == 0) {
+            return;
+        }
+
+        MenuItem selectedItem = cartItem.getItem();
+        if (selectedItem == null) {
+            return;
+        }
+
+        if (selectedIdx == 1) {
+            cart.addItem(selectedItem);
+        } else if (selectedIdx == 2) {
+            cart.decreaseItem(selectedItem);
+        } else if (selectedIdx == 3) {
+            cart.removeItem(selectedItem);
+        }
+
+
+    }
+
+    private void operateOrder(Cart cart, Discount dcType) {
         double discountedPrice = cart.getTotalPrice() -
                 cart.getTotalPrice() * dcType.getDcRate();
         int oneEliminatedPrice = (int) (Math.floor(discountedPrice / 10) * 10);
@@ -92,23 +146,22 @@ public class Kiosk {
         cart.clearCart();
     }
 
-    private Optional<DiscountType> confirmDiscount(Scanner sc) {
+    private Discount confirmDiscount(Scanner sc) {
         int idx = 1;
-        DiscountType[] discountTypes = DiscountType.values();
-        for (DiscountType discountType : discountTypes) {
-            String formattedDiscountRate = String.format("%d. %-6s: %.0f%% 할인", idx++, discountType.getDesc(),
-                    discountType.getDcRate() * 100);
+        List<Discount> availableDiscounts = Discount.getAvailableDiscounts();
+        for (Discount discount : availableDiscounts) {
+            String formattedDiscountRate = String.format("%d. %-6s: %.0f%% 할인", idx++, discount.getDesc(),
+                    discount.getDcRate() * 100);
             printInfo(formattedDiscountRate);
         }
         printInfo("0. 뒤로 가기");
         printInput("할인 정보를 확인하시고 번호를 입력해주세요.: ");
 
-        int selectedDiscountIdx = getUserInput(sc, 0, discountTypes.length);
+        int selectedDiscountIdx = getUserInput(sc, 0, availableDiscounts.size());
         if (selectedDiscountIdx == 0) {
-            return Optional.empty();
+            return null;
         }
-
-        return Optional.ofNullable(discountTypes[selectedDiscountIdx]);
+        return Discount.findDiscount(selectedDiscountIdx);
     }
 
     private void showSubMenu(Scanner sc, int selectedMenuIdx, Cart cart) {
@@ -117,7 +170,7 @@ public class Kiosk {
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
 
         while (true) {
-            System.out.println();
+            printNewLine();
             printLine();
             printTitle(selectedMenu.getCategory() + " MENU");
             displayMenuItems(menuItemList);
@@ -129,7 +182,7 @@ public class Kiosk {
             int selectedItemIdx = getUserInput(sc, 0, menuItemList.size());
             if (selectedItemIdx == 0) {
                 printInfo("이전 화면으로 돌아갑니다.");
-                break;
+                return;
             }
 
             MenuItem selectedItem = menuItemList.get(selectedItemIdx - 1);
@@ -227,5 +280,9 @@ public class Kiosk {
 
     private void printLine() {
         System.out.println("KIOSK:::: ====================================");
+    }
+
+    private void printNewLine() {
+        System.out.println();
     }
 }
