@@ -26,7 +26,7 @@ public class Cart {
         String itemName = menuItem.getName();
 
         if (cartItems.remove(itemName) == null) {
-            System.out.println("장바구니에 없는 메뉴입니다.");
+            throw new NullPointerException();
         }
 
     }
@@ -36,8 +36,7 @@ public class Cart {
         CartItem cartItem = cartItems.get(itemName);
 
         if (cartItem == null) {
-            System.out.println("장바구니에 없는 메뉴입니다.");
-            return;
+            throw new NullPointerException();
         }
 
         cartItem.decreaseQuantity();

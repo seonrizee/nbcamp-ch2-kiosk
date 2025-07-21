@@ -41,9 +41,9 @@ public class Kiosk {
                     if (!cart.isCartEmpty() && selectedMenuIdx == 4) {
                         handleCheckoutOrder(sc, cart);
                     } else if (!cart.isCartEmpty() && selectedMenuIdx == 5) {
-                        showCartUpdateMenu(sc, cart);
+                        handleUpdateCart(sc, cart);
                     } else if (selectedMenuIdx <= orderMinValidIdx) {
-                        showSubMenu(sc, selectedMenuIdx, cart);
+                        handleSelectMenu(sc, selectedMenuIdx, cart);
                     }
                 }
 
@@ -84,7 +84,7 @@ public class Kiosk {
         }
     }
 
-    private void showCartUpdateMenu(Scanner sc, Cart cart) {
+    private void handleUpdateCart(Scanner sc, Cart cart) {
         while (true) {
             if (cart.isCartEmpty()) {
                 printInfo("장바구니에 남은 메뉴가 없어 처음으로 돌아갑니다.");
@@ -119,19 +119,17 @@ public class Kiosk {
         }
 
         MenuItem selectedItem = cartItem.getItem();
-        if (selectedItem == null) {
-            return;
+        try {
+            if (selectedIdx == 1) {
+                cart.addItem(selectedItem);
+            } else if (selectedIdx == 2) {
+                cart.decreaseItem(selectedItem);
+            } else if (selectedIdx == 3) {
+                cart.removeItem(selectedItem);
+            }
+        } catch (NullPointerException e) {
+            printError("장바구니에 없는 메뉴입니다.");
         }
-
-        if (selectedIdx == 1) {
-            cart.addItem(selectedItem);
-        } else if (selectedIdx == 2) {
-            cart.decreaseItem(selectedItem);
-        } else if (selectedIdx == 3) {
-            cart.removeItem(selectedItem);
-        }
-
-
     }
 
     private void operateOrder(Cart cart, Discount dcType) {
@@ -164,7 +162,7 @@ public class Kiosk {
         return Discount.findDiscount(selectedDiscountIdx);
     }
 
-    private void showSubMenu(Scanner sc, int selectedMenuIdx, Cart cart) {
+    private void handleSelectMenu(Scanner sc, int selectedMenuIdx, Cart cart) {
 
         Menu selectedMenu = menuList.get(selectedMenuIdx - 1);
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
@@ -262,10 +260,6 @@ public class Kiosk {
         System.out.printf(format, idx, menuItem.getName(), menuItem.getPrice(), menuItem.getDesc());
     }
 
-    private void printTitle(String msg) {
-        System.out.println("KIOSK:::: [ " + msg + " ] ");
-    }
-
     private void printInfo(String msg) {
         System.out.println("KIOSK:::: " + msg);
     }
@@ -276,6 +270,10 @@ public class Kiosk {
 
     private void printInput(String msg) {
         System.out.print("KIOSK:::: " + msg);
+    }
+
+    private void printTitle(String msg) {
+        System.out.println("KIOSK:::: [ " + msg + " ] ");
     }
 
     private void printLine() {
