@@ -1,6 +1,7 @@
 package io.github.seonrizee.kiosk.challenge.lv2;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Kiosk {
@@ -39,7 +40,7 @@ public class Kiosk {
                     break;
                 } else {
                     if (!cart.isCartEmpty() && selectedMenuIdx > orderMinValidIdx) {
-                        operateOrder(sc, cart);
+                        processCheckout(sc, cart);
                     } else if (selectedMenuIdx <= orderMinValidIdx) {
                         showSubMenu(sc, selectedMenuIdx, cart);
                     }
@@ -57,7 +58,7 @@ public class Kiosk {
         printInfo(minValidIdx + 2 + ". Cancel   | 진행중인 주문을 취소합니다.");
     }
 
-    private boolean confirmOrder(Scanner sc) {
+    private boolean confirmCart(Scanner sc) {
         printInfo("1. 주문");
         printInfo("2. 뒤로 가기");
         printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
@@ -66,16 +67,48 @@ public class Kiosk {
         return selection == 1;
     }
 
-    private void operateOrder(Scanner sc, Cart cart) {
+    private void processCheckout(Scanner sc, Cart cart) {
         showCartStatus(cart);
-        boolean isConfirmed = confirmOrder(sc);
-        if (isConfirmed) {
-            String formattedPrice = String.format("%,d", cart.getTotalPrice());
-            printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
-            cart.clearCart();
-        } else {
-            printInfo("주문이 취소되었습니다. 메뉴로 돌아갑니다.");
+        boolean isCartConfirmed = confirmCart(sc);
+        if (isCartConfirmed) {
+            Optional<DiscountType> selectedDcType = confirmDiscount(sc);
+            if (selectedDcType.isPresent()) {
+                operateOrder(cart, selectedDcType.get());
+                return;
+            }
         }
+        printInfo("주문이 취소되었습니다. 메뉴로 돌아갑니다.");
+    }
+
+    private void operateOrder(Cart cart, DiscountType dcType) {
+        double discountedPrice = cart.getTotalPrice() -
+                cart.getTotalPrice() * dcType.getDcRate();
+        int oneEliminatedPrice = (int) (Math.floor(discountedPrice / 10) * 10);
+        String formattedOriginalPrice = String.format("%,d", cart.getTotalPrice());
+        String formattedPrice = String.format("%,d", oneEliminatedPrice);
+        printInfo("할일 전 가격: " + formattedOriginalPrice + "원");
+        printInfo("할인 후 가격: " + formattedPrice + "원");
+        printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
+        cart.clearCart();
+    }
+
+    private Optional<DiscountType> confirmDiscount(Scanner sc) {
+        int idx = 1;
+        DiscountType[] discountTypes = DiscountType.values();
+        for (DiscountType discountType : discountTypes) {
+            String formattedDiscountRate = String.format("%d. %-6s: %.0f%% 할인", idx++, discountType.getDesc(),
+                    discountType.getDcRate() * 100);
+            printInfo(formattedDiscountRate);
+        }
+        printInfo("0. 뒤로 가기");
+        printInput("할인 정보를 확인하시고 번호를 입력해주세요.: ");
+
+        int selectedDiscountIdx = getUserInput(sc, 0, discountTypes.length);
+        if (selectedDiscountIdx == 0) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(discountTypes[selectedDiscountIdx]);
     }
 
     private void showSubMenu(Scanner sc, int selectedMenuIdx, Cart cart) {
