@@ -88,6 +88,12 @@ public class KioskConsole {
         printInfo("총 가격: " + formattedPrice + "원");
     }
 
+    public void displayTwoOptions() {
+        printInfo("1. 주문");
+        printInfo("0. 뒤로 가기");
+        printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
+    }
+
     public int getUserInput(Scanner sc, int minValidIdx, int maxValidIdx) {
         while (true) {
             try {

@@ -8,7 +8,7 @@ public class Cart {
 
     private final Map<String, CartItem> cartItems = new LinkedHashMap<>();
 
-    public void addItem(MenuItem menuItem) {
+    public boolean addItem(MenuItem menuItem) {
 
         String itemName = menuItem.getName();
         CartItem cartItem = cartItems.get(itemName);
@@ -16,18 +16,19 @@ public class Cart {
         if (cartItem == null) {
             cartItem = new CartItem(menuItem);
             cartItems.put(itemName, cartItem);
-            return;
+            return true;
         }
 
         cartItem.increaseQuantity();
+        return true;
     }
 
-    public void removeItem(MenuItem menuItem) {
+    public boolean removeItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
-        cartItems.remove(itemName);
+        return cartItems.remove(itemName) != null;
     }
 
-    public void decreaseItem(MenuItem menuItem) {
+    public boolean decreaseItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
         CartItem cartItem = cartItems.get(itemName);
 
@@ -36,6 +37,7 @@ public class Cart {
             removeItem(menuItem);
         }
 
+        return true;
     }
 
     public int getCartTotalPrice() {

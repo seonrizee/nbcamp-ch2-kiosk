@@ -43,8 +43,12 @@ public class Kiosk {
         final int LIMIT_INDEX = UPDATE_INDEX;
 
         console.displayMainOpening(CHECKOUT_INDEX, cart, menuList);
-
-        int selectedIdx = console.getUserInput(sc, EXIT_INDEX, LIMIT_INDEX);
+        int selectedIdx;
+        if (!cart.isCartEmpty()) {
+            selectedIdx = console.getUserInput(sc, EXIT_INDEX, LIMIT_INDEX);
+        } else {
+            selectedIdx = console.getUserInput(sc, EXIT_INDEX, MENU_SIZE);
+        }
 
         if (!cart.isCartEmpty()) {
             if (selectedIdx == CHECKOUT_INDEX) {
@@ -70,10 +74,9 @@ public class Kiosk {
             return nextScreen;
         }
 
+        console.printNewLine();
         console.displayCartStatus(cart);
-        console.printInfo("1. 주문");
-        console.printInfo("0. 뒤로 가기");
-        console.printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
+        console.displayTwoOptions();
 
         int selectedIdx = console.getUserInput(sc, 0, 1);
 
@@ -88,7 +91,10 @@ public class Kiosk {
         return nextScreen;
     }
 
+
     private Discount confirmDiscount(Scanner sc) {
+        console.printNewLine();
+
         int idx = 1;
         List<Discount> availableDiscounts = Discount.getAvailableDiscounts();
         for (Discount discount : availableDiscounts) {
@@ -96,6 +102,7 @@ public class Kiosk {
                     discount.getDcRate() * 100);
             console.printInfo(formattedDiscountRate);
         }
+
         console.printInfo("0. 뒤로 가기");
         console.printInput("할인 정보를 확인하시고 번호를 입력해주세요.: ");
 
@@ -113,6 +120,8 @@ public class Kiosk {
 
         String formattedOriginalPrice = String.format("%,d", cartTotalPrice);
         String formattedPrice = String.format("%,d", oneEliminatedPrice);
+
+        console.printNewLine();
         console.printInfo("할일 전 가격: " + formattedOriginalPrice + "원");
         console.printInfo("할인 후 가격: " + formattedPrice + "원");
         console.printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
@@ -126,6 +135,7 @@ public class Kiosk {
             return new ScreenIntent(Screen.MAIN);
         }
 
+        console.printNewLine();
         console.displayCartStatus(cart);
         console.printInfo("0. 뒤로 가기");
         console.printInput("선택하신 메뉴를 확인하시고 수정하고 싶은 메뉴의 번호를 입력해주세요.: ");
@@ -141,6 +151,9 @@ public class Kiosk {
 
     private void updateCart(Scanner sc, int selectedItemIdx, CartItem cartItem) {
 
+        final int UPDATE_SIZE = 3;
+
+        console.printNewLine();
         console.displayCartItem(selectedItemIdx, cartItem);
         console.printInfo("1. 메뉴 수량 증가");
         console.printInfo("2. 메뉴 수량 감소");
@@ -148,7 +161,7 @@ public class Kiosk {
         console.printInfo("0. 뒤로 가기");
         console.printInput("원하는 기능의 메뉴를 고르세요.: ");
 
-        int selectedIdx = console.getUserInput(sc, 0, 3);
+        int selectedIdx = console.getUserInput(sc, 0, UPDATE_SIZE);
         if (selectedIdx == 0) {
             return;
         }
@@ -156,11 +169,17 @@ public class Kiosk {
         MenuItem selectedItem = cartItem.getItem();
 
         if (selectedIdx == 1) {
-            cart.addItem(selectedItem);
+            if (cart.addItem(selectedItem)) {
+                console.printInfo(selectedItem.getName() + "이(가) 의 수량을 1개 추가했습니다.");
+            }
         } else if (selectedIdx == 2) {
-            cart.decreaseItem(selectedItem);
+            if (cart.decreaseItem(selectedItem)) {
+                console.printInfo(selectedItem.getName() + "이(가) 의 수량을 1개 감소했습니다.");
+            }
         } else if (selectedIdx == 3) {
-            cart.removeItem(selectedItem);
+            if (cart.removeItem(selectedItem)) {
+                console.printInfo(selectedItem.getName() + "을(를) 장바구니에서 삭제했습니다.");
+            }
         }
 
     }
@@ -196,17 +215,17 @@ public class Kiosk {
     }
 
     private boolean confirmAddToCart(Scanner sc, int selectedItemIdx, MenuItem selectedItem) {
+        console.printNewLine();
         console.displayMenuItem(selectedItemIdx, selectedItem);
-        console.printInfo("1. 확인");
-        console.printInfo("2. 취소");
-        console.printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
+        console.displayTwoOptions();
 
-        int selectedIdx = console.getUserInput(sc, 1, 2);
+        int selectedIdx = console.getUserInput(sc, 0, 1);
         return selectedIdx == 1;
     }
 
     private void addItemToCart(MenuItem selectedItem) {
-        console.printInfo(selectedItem.getName() + "이(가) 장바구니에 추가되었습니다.");
+        console.printNewLine();
+        console.printInfo(selectedItem.getName() + "을(를) 장바구니에 추가했습니다.");
         cart.addItem(selectedItem);
         console.displayCartStatus(cart);
     }
