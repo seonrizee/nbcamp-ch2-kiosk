@@ -1,4 +1,4 @@
-package io.github.seonrizee.kiosk.challenge.lv2;
+package io.github.seonrizee.kiosk.challenge.lv2.domain;
 
 import java.util.Arrays;
 import java.util.List;

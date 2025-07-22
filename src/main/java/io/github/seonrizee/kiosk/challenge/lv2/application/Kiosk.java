@@ -1,5 +1,11 @@
-package io.github.seonrizee.kiosk.challenge.lv2;
+package io.github.seonrizee.kiosk.challenge.lv2.application;
 
+import io.github.seonrizee.kiosk.challenge.lv2.domain.Cart;
+import io.github.seonrizee.kiosk.challenge.lv2.domain.CartItem;
+import io.github.seonrizee.kiosk.challenge.lv2.domain.Discount;
+import io.github.seonrizee.kiosk.challenge.lv2.domain.Menu;
+import io.github.seonrizee.kiosk.challenge.lv2.domain.MenuItem;
+import io.github.seonrizee.kiosk.challenge.lv2.view.KioskConsole;
 import java.util.List;
 import java.util.Scanner;
 

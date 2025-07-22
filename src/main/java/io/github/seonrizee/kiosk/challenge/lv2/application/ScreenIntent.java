@@ -1,4 +1,4 @@
-package io.github.seonrizee.kiosk.challenge.lv2;
+package io.github.seonrizee.kiosk.challenge.lv2.application;
 
 public class ScreenIntent {
 
