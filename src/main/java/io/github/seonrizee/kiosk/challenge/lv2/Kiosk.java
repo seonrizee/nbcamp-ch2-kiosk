@@ -17,31 +17,17 @@ public class Kiosk {
 
     public void start() {
         try (Scanner sc = new Scanner(System.in)) {
-            Screen curScreen = Screen.MAIN;
-            Object curData = null;
+            ScreenIntent curIntent = new ScreenIntent(Screen.MAIN);
 
-            while (curScreen != Screen.EXIT) {
-                ScreenIntent nextScreen = null;
-                switch (curScreen) {
-                    case MAIN:
-                        nextScreen = handleMainMenu(sc);
-                        break;
-                    case MENU_DETAIL:
-                        nextScreen = handleSelectMenu(sc, (int) curData);
-                        break;
-                    case ORDER_CHECKOUT:
-                        nextScreen = handleCheckoutOrder(sc);
-                        break;
-                    case ORDER_UPDATE:
-                        nextScreen = handleUpdateOrder(sc);
-                        break;
-                    default:
-                        console.printInfo("키오스크를 종료합니다.");
-                        nextScreen = new ScreenIntent(Screen.EXIT);
-                        break;
-                }
-                curScreen = nextScreen.getNextScreen();
-                curData = nextScreen.getData();
+            while (curIntent.getNextScreen() != Screen.EXIT) {
+                curIntent = switch (curIntent.getNextScreen()) {
+                    case MAIN -> handleMainMenu(sc);
+                    case MENU_DETAIL -> handleSelectMenu(sc, curIntent);
+                    case ORDER_CHECKOUT -> handleCheckoutOrder(sc);
+                    case ORDER_UPDATE -> handleUpdateOrder(sc);
+                    case EXIT -> curIntent;
+                };
+
             }
 
         }
@@ -49,29 +35,31 @@ public class Kiosk {
     }
 
     private ScreenIntent handleMainMenu(Scanner sc) {
-        console.displayMainOpening();
-        console.displayMenuList(menuList);
 
-        int orderMinValidIdx = menuList.size();
-        int orderMaxValidIdx = orderMinValidIdx + 2;
+        final int MENU_SIZE = menuList.size();
+        final int EXIT_INDEX = 0;
+        final int CHECKOUT_INDEX = MENU_SIZE + 1;
+        final int UPDATE_INDEX = CHECKOUT_INDEX + 1;
+        final int LIMIT_INDEX = UPDATE_INDEX;
+
+        console.displayMainOpening(CHECKOUT_INDEX, cart, menuList);
+
+        int selectedIdx = console.getUserInput(sc, EXIT_INDEX, LIMIT_INDEX);
+
         if (!cart.isCartEmpty()) {
-            console.displayOrderMenu(orderMinValidIdx);
-        }
-        console.printInfo("0. 종료");
-        console.printLine();
-        console.printInput("원하는 카테고리 또는 기능의 번호를 입력해주세요.: ");
-
-        // TODO 카트가 비어있을 떄와 그렇지 않을 때의 입력범위 정리하기
-        int selectedMenuIdx = console.getUserInput(sc, 0, orderMaxValidIdx);
-        if (selectedMenuIdx != 0) {
-            if (!cart.isCartEmpty() && selectedMenuIdx == 4) {
+            if (selectedIdx == CHECKOUT_INDEX) {
                 return new ScreenIntent(Screen.ORDER_CHECKOUT);
-            } else if (!cart.isCartEmpty() && selectedMenuIdx == 5) {
+            }
+            if (selectedIdx == UPDATE_INDEX) {
                 return new ScreenIntent(Screen.ORDER_UPDATE);
-            } else if (selectedMenuIdx <= orderMinValidIdx) {
-                return new ScreenIntent(Screen.MENU_DETAIL, selectedMenuIdx);
             }
         }
+
+        if (selectedIdx > 0 && selectedIdx <= MENU_SIZE) {
+            return new ScreenIntent(Screen.MENU_DETAIL, selectedIdx);
+        }
+
+        console.printInfo("키오스크를 종료합니다.");
         return new ScreenIntent(Screen.EXIT);
     }
 
@@ -119,10 +107,11 @@ public class Kiosk {
     }
 
     private void operateOrder(Discount dcType) {
-        double discountedPrice = cart.getTotalPrice() -
-                cart.getTotalPrice() * dcType.getDcRate();
+        int cartTotalPrice = cart.getCartTotalPrice();
+        double discountedPrice = cartTotalPrice - cartTotalPrice * dcType.getDcRate();
         int oneEliminatedPrice = (int) (Math.floor(discountedPrice / 10) * 10);
-        String formattedOriginalPrice = String.format("%,d", cart.getTotalPrice());
+
+        String formattedOriginalPrice = String.format("%,d", cartTotalPrice);
         String formattedPrice = String.format("%,d", oneEliminatedPrice);
         console.printInfo("할일 전 가격: " + formattedOriginalPrice + "원");
         console.printInfo("할인 후 가격: " + formattedPrice + "원");
@@ -133,7 +122,7 @@ public class Kiosk {
     private ScreenIntent handleUpdateOrder(Scanner sc) {
 
         if (cart.isCartEmpty()) {
-            console.printInfo("장바구니에 남은 메뉴가 없어 처음으로 돌아갑니다.");
+            console.printInfo("장바구니에 남은 메뉴가 없어 메인 화면으로 돌아갑니다.");
             return new ScreenIntent(Screen.MAIN);
         }
 
@@ -141,18 +130,18 @@ public class Kiosk {
         console.printInfo("0. 뒤로 가기");
         console.printInput("선택하신 메뉴를 확인하시고 수정하고 싶은 메뉴의 번호를 입력해주세요.: ");
 
-        int selectedIdx = console.getUserInput(sc, 0, cart.getCartItemList().size());
+        int selectedIdx = console.getUserInput(sc, 0, cart.getCartItems().size());
         if (selectedIdx == 0) {
             return new ScreenIntent(Screen.MAIN);
         }
 
-        updateCart(sc, selectedIdx, cart.getCartItemList().get(selectedIdx - 1));
+        updateCart(sc, selectedIdx, cart.getCartItems().get(selectedIdx - 1));
         return new ScreenIntent(Screen.ORDER_UPDATE);
     }
 
-    private void updateCart(Scanner sc, int selection, CartItem cartItem) {
+    private void updateCart(Scanner sc, int selectedItemIdx, CartItem cartItem) {
 
-        console.displayCartItem(selection, cartItem);
+        console.displayCartItem(selectedItemIdx, cartItem);
         console.printInfo("1. 메뉴 수량 증가");
         console.printInfo("2. 메뉴 수량 감소");
         console.printInfo("3. 메뉴 삭제");
@@ -165,25 +154,22 @@ public class Kiosk {
         }
 
         MenuItem selectedItem = cartItem.getItem();
-        try {
-            if (selectedIdx == 1) {
-                cart.addItem(selectedItem);
-            } else if (selectedIdx == 2) {
-                cart.decreaseItem(selectedItem);
-            } else if (selectedIdx == 3) {
-                cart.removeItem(selectedItem);
-            }
-        } catch (NullPointerException e) {
-            console.printError("장바구니에 없는 메뉴입니다.");
+
+        if (selectedIdx == 1) {
+            cart.addItem(selectedItem);
+        } else if (selectedIdx == 2) {
+            cart.decreaseItem(selectedItem);
+        } else if (selectedIdx == 3) {
+            cart.removeItem(selectedItem);
         }
 
     }
 
 
-    private ScreenIntent handleSelectMenu(Scanner sc, int selectedMenuIdx) {
+    private ScreenIntent handleSelectMenu(Scanner sc, ScreenIntent curIntent) {
         ScreenIntent nextScreen = new ScreenIntent(Screen.MAIN);
 
-        Menu selectedMenu = menuList.get(selectedMenuIdx - 1);
+        Menu selectedMenu = menuList.get(curIntent.getData() - 1);
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
 
         console.printNewLine();
@@ -206,7 +192,7 @@ public class Kiosk {
         if (isConfirmed) {
             addItemToCart(selectedItem);
         }
-        return new ScreenIntent(Screen.MENU_DETAIL, selectedMenuIdx);
+        return new ScreenIntent(Screen.MENU_DETAIL, curIntent.getData());
     }
 
     private boolean confirmAddToCart(Scanner sc, int selectedItemIdx, MenuItem selectedItem) {
@@ -215,8 +201,8 @@ public class Kiosk {
         console.printInfo("2. 취소");
         console.printInput("선택하신 메뉴를 확인하시고 번호를 입력해주세요.: ");
 
-        int selection = console.getUserInput(sc, 1, 2);
-        return selection == 1;
+        int selectedIdx = console.getUserInput(sc, 1, 2);
+        return selectedIdx == 1;
     }
 
     private void addItemToCart(MenuItem selectedItem) {

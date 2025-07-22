@@ -8,5 +8,3 @@ public enum Screen {
     EXIT             // 종료
 
 }
-
-

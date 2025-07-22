@@ -4,36 +4,45 @@ import java.util.List;
 import java.util.Scanner;
 
 public class KioskConsole {
+    private static final String PROMPT = "KIOSK:::: ";
 
     public void printInfo(String msg) {
-        System.out.println("KIOSK:::: " + msg);
+        System.out.println(PROMPT + msg);
     }
 
     public void printError(String msg) {
-        System.out.print("KIOSK_ERROR:::: " + msg + ":");
+        System.out.print(PROMPT + msg + ":");
     }
 
     public void printInput(String msg) {
-        System.out.print("KIOSK:::: " + msg);
+        System.out.print(PROMPT + msg);
     }
 
     public void printTitle(String msg) {
-        System.out.println("KIOSK:::: [ " + msg + " ] ");
+        System.out.println(PROMPT + "[ " + msg + " ] ");
     }
 
     public void printLine() {
-        System.out.println("KIOSK:::: ====================================");
+        System.out.println(PROMPT + "====================================");
     }
 
     public void printNewLine() {
         System.out.println();
     }
 
-    public void displayMainOpening() {
+
+    public void displayMainOpening(int CHECKOUT_INDEX, Cart cart, List<Menu> menuList) {
         printNewLine();
         printLine();
         printInfo("Welcome to Five Guys");
         printTitle("MAIN MENU");
+        displayMenuList(menuList);
+        if (!cart.isCartEmpty()) {
+            displayOrderMenu(CHECKOUT_INDEX);
+        }
+        printInfo("0. 종료");
+        printLine();
+        printInput("원하는 카테고리 또는 기능의 번호를 입력해주세요.: ");
     }
 
     public void displayCartItems(List<CartItem> cartItems) {
@@ -43,9 +52,9 @@ public class KioskConsole {
     }
 
     public void displayCartItem(int idx, CartItem cartItem) {
-        String format = "KIOSK:::: %d. %-16s | %3d개 | %,6d원\n";
+        String format = PROMPT + "%d. %-16s | %3d개 | %,6d원\n";
         System.out.printf(format, idx, cartItem.getItem().getName(), cartItem.getQuantity(),
-                cartItem.getSumItemPrice());
+                cartItem.getItemTotalPrice());
     }
 
     public void displayMenuList(List<Menu> menuList) {
@@ -61,20 +70,20 @@ public class KioskConsole {
     }
 
     public void displayMenuItem(int idx, MenuItem menuItem) {
-        String format = "KIOSK:::: %d. %-16s | %,6d원 | %s\n";
+        String format = PROMPT + "%d. %-16s | %,6d원 | %s\n";
         System.out.printf(format, idx, menuItem.getName(), menuItem.getPrice(), menuItem.getDesc());
     }
 
-    public void displayOrderMenu(int minValidIdx) {
+    public void displayOrderMenu(int CHECKOUT_INDEX) {
         printTitle("ORDER MENU");
-        printInfo(minValidIdx + 1 + ". Orders   | 장바구니를 확인 후 주문합니다.");
-        printInfo(minValidIdx + 2 + ". Edit     | 장바구니를 확인 후 수정합니다.");
+        printInfo(CHECKOUT_INDEX + ". Orders   | 장바구니를 확인 후 주문합니다.");
+        printInfo(CHECKOUT_INDEX + 1 + ". Edit     | 장바구니를 확인 후 수정합니다.");
     }
 
     public void displayCartStatus(Cart cart) {
         printTitle("CART STATUS");
-        displayCartItems(cart.getCartItemList());
-        String formattedPrice = String.format("%,d", cart.getTotalPrice());
+        displayCartItems(cart.getCartItems());
+        String formattedPrice = String.format("%,d", cart.getCartTotalPrice());
         printLine();
         printInfo("총 가격: " + formattedPrice + "원");
     }

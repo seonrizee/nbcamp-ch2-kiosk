@@ -24,20 +24,12 @@ public class Cart {
 
     public void removeItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
-
-        if (cartItems.remove(itemName) == null) {
-            throw new NullPointerException();
-        }
-
+        cartItems.remove(itemName);
     }
 
     public void decreaseItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
         CartItem cartItem = cartItems.get(itemName);
-
-        if (cartItem == null) {
-            throw new NullPointerException();
-        }
 
         cartItem.decreaseQuantity();
         if (cartItem.getQuantity() == 0) {
@@ -46,10 +38,10 @@ public class Cart {
 
     }
 
-    public int getTotalPrice() {
+    public int getCartTotalPrice() {
         return cartItems.values()
                 .stream()
-                .mapToInt(CartItem::getSumItemPrice)
+                .mapToInt(CartItem::getItemTotalPrice)
                 .sum();
 
     }
@@ -58,7 +50,7 @@ public class Cart {
         cartItems.clear();
     }
 
-    public List<CartItem> getCartItemList() {
+    public List<CartItem> getCartItems() {
         return List.copyOf(cartItems.values());
     }
 

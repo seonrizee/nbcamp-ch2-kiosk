@@ -2,31 +2,25 @@ package io.github.seonrizee.kiosk.challenge.lv2;
 
 public class ScreenIntent {
 
-    private Screen nextScreen;
-    private Object data;
+    private final Screen nextScreen;
+    private final int idxData;
 
-    public ScreenIntent(Screen nextScreen, Object data) {
+    public ScreenIntent(Screen nextScreen, int idxData) {
         this.nextScreen = nextScreen;
-        this.data = data;
+        this.idxData = idxData;
     }
 
     public ScreenIntent(Screen nextScreen) {
-        this(nextScreen, null);
+        this(nextScreen, 0);
     }
 
     public Screen getNextScreen() {
         return nextScreen;
     }
 
-    public void setNextScreen(Screen nextScreen) {
-        this.nextScreen = nextScreen;
+
+    public int getData() {
+        return idxData;
     }
 
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 }
