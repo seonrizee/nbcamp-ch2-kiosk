@@ -7,15 +7,16 @@ public class Kiosk {
 
     private final List<Menu> menuList;
     private final KioskConsole console;
+    private final Cart cart;
 
     public Kiosk(List<Menu> menuList) {
         this.menuList = menuList;
         this.console = new KioskConsole();
+        this.cart = new Cart();
     }
 
     public void start() {
 
-        Cart cart = new Cart();
         try (Scanner sc = new Scanner(System.in)) {
             while (true) {
 
