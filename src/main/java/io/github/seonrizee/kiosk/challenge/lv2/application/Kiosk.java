@@ -156,11 +156,7 @@ public class Kiosk {
 
         console.printNewLine();
         console.displayCartItem(selectedItemIdx, cartItem);
-        console.printInfo("1. 메뉴 수량 증가");
-        console.printInfo("2. 메뉴 수량 감소");
-        console.printInfo("3. 메뉴 삭제");
-        console.printInfo("0. 뒤로 가기");
-        console.printInput("원하는 기능의 메뉴를 고르세요.: ");
+        console.displayUpdateCartMenu();
 
         int selectedIdx = console.getUserInput(sc, 0, UPDATE_SIZE);
         if (selectedIdx == 0) {
@@ -185,21 +181,13 @@ public class Kiosk {
 
     }
 
-
     private ScreenIntent handleSelectMenu(Scanner sc, ScreenIntent curIntent) {
         ScreenIntent nextScreen = new ScreenIntent(Screen.MAIN);
 
         Menu selectedMenu = menuList.get(curIntent.getData() - 1);
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
 
-        console.printNewLine();
-        console.printLine();
-        console.printTitle(selectedMenu.getCategory() + " MENU");
-        console.displayMenuItems(menuItemList);
-
-        console.printInfo("0. 뒤로 가기");
-        console.printLine();
-        console.printInput("원하는 메뉴의 번호를 입력해주세요.: ");
+        console.displaySelectMenu(selectedMenu, menuItemList);
 
         int selectedItemIdx = console.getUserInput(sc, 0, menuItemList.size());
         if (selectedItemIdx == 0) {
@@ -214,6 +202,7 @@ public class Kiosk {
         }
         return new ScreenIntent(Screen.MENU_DETAIL, curIntent.getData());
     }
+
 
     private boolean confirmAddToCart(Scanner sc, int selectedItemIdx, MenuItem selectedItem) {
         console.printNewLine();

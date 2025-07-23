@@ -79,6 +79,17 @@ public class KioskConsole {
         System.out.printf(format, idx, menuItem.getName(), menuItem.getPrice(), menuItem.getDesc());
     }
 
+    public void displaySelectMenu(Menu selectedMenu, List<MenuItem> menuItemList) {
+        printNewLine();
+        printLine();
+        printTitle(selectedMenu.getCategory() + " MENU");
+        displayMenuItems(menuItemList);
+
+        printInfo("0. 뒤로 가기");
+        printLine();
+        printInput("원하는 메뉴의 번호를 입력해주세요.: ");
+    }
+
     public void displayOrderMenu(int CHECKOUT_INDEX) {
         printTitle("ORDER MENU");
         printInfo(CHECKOUT_INDEX + ". Orders   | 장바구니를 확인 후 주문합니다.");
@@ -101,6 +112,15 @@ public class KioskConsole {
         printInfo("할인 적용 금액: " + formattedPrice + "원 | 할인율: " + (dcType.getDcRate() * 100) + "% (원 단위 절사)");
         printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
     }
+
+    public void displayUpdateCartMenu() {
+        printInfo("1. 메뉴 수량 증가");
+        printInfo("2. 메뉴 수량 감소");
+        printInfo("3. 메뉴 삭제");
+        printInfo("0. 뒤로 가기");
+        printInput("원하는 기능의 메뉴를 고르세요.: ");
+    }
+
 
     public void displayTwoOptions() {
         printInfo("1. 주문");
