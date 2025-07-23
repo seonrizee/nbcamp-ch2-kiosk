@@ -7,6 +7,7 @@ import io.github.seonrizee.kiosk.challenge.lv2.domain.Menu;
 import io.github.seonrizee.kiosk.challenge.lv2.domain.MenuItem;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 /**
  * 키오스크의 콘솔 입출력을 담당하는 뷰(View) 클래스.
@@ -95,9 +96,8 @@ public class KioskConsole {
      * @param cartItems 표시할 {@link CartItem} 리스트
      */
     public void displayCartItems(List<CartItem> cartItems) {
-        for (int idx = 0; idx < cartItems.size(); idx++) {
-            displayCartItem(idx + 1, cartItems.get(idx));
-        }
+        IntStream.range(0, cartItems.size())
+                .forEach(idx -> displayCartItem(idx + 1, cartItems.get(idx)));
     }
 
     /**
@@ -118,9 +118,8 @@ public class KioskConsole {
      * @param menuList 표시할 {@link Menu} 리스트
      */
     public void displayMenuList(List<Menu> menuList) {
-        for (int idx = 0; idx < menuList.size(); idx++) {
-            printInfo(idx + 1 + ". " + menuList.get(idx).getCategory());
-        }
+        IntStream.range(0, menuList.size())
+                .forEach(idx -> printInfo(idx + 1 + ". " + menuList.get(idx).getCategory()));
     }
 
     /**
@@ -129,9 +128,8 @@ public class KioskConsole {
      * @param menuItems 표시할 {@link MenuItem} 리스트
      */
     public void displayMenuItems(List<MenuItem> menuItems) {
-        for (int idx = 0; idx < menuItems.size(); idx++) {
-            displayMenuItem(idx + 1, menuItems.get(idx));
-        }
+        IntStream.range(0, menuItems.size())
+                .forEach(idx -> displayMenuItem(idx + 1, menuItems.get(idx)));
     }
 
     /**
