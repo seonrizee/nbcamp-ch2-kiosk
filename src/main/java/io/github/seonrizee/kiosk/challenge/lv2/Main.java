@@ -7,6 +7,11 @@ import java.util.List;
 
 public class Main {
 
+    /**
+     * Kiosk 프로젝트의 메인 메서드.
+     *
+     * @param
+     */
     public static void main(String[] args) {
 
         List<Menu> menuList = setupMenuList();
@@ -14,7 +19,11 @@ public class Main {
         kiosk.start();
     }
 
-
+    /**
+     * 키오스크에서 사용할 메뉴와 메뉴 아이템 목록을 초기화하고 설정합니다.
+     *
+     * @return 초기화된 {@link Menu} 객체의 리스트
+     */
     private static List<Menu> setupMenuList() {
         Menu burgerMenu = new Menu("BURGERS", List.of(
                 new MenuItem("HAMBURGER", 13400, "부드러운 참깨 번 사이에 갓 구운 신선한 수제 패티 2장을 얹어 제공합니다."),
