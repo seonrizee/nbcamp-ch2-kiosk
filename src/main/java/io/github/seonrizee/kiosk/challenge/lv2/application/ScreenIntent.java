@@ -19,7 +19,7 @@ public class ScreenIntent {
     }
 
 
-    public int getData() {
+    public int getIdxData() {
         return idxData;
     }
 

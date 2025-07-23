@@ -26,21 +26,15 @@ public class Kiosk {
             ScreenIntent curIntent = new ScreenIntent(Screen.MAIN);
 
             while (curIntent.getNextScreen() != Screen.EXIT) {
-                curIntent = switch (curIntent.getNextScreen()) {
-                    case MAIN -> handleMainMenu(sc);
-                    case MENU_DETAIL -> handleSelectMenu(sc, curIntent);
-                    case ORDER_CHECKOUT -> handleCheckoutOrder(sc);
-                    case ORDER_UPDATE -> handleUpdateOrder(sc);
-                    case EXIT -> curIntent;
-                };
-
+                curIntent = curIntent.getNextScreen()
+                        .processScreen(this, sc, curIntent);
             }
 
         }
 
     }
 
-    private ScreenIntent handleMainMenu(Scanner sc) {
+    public ScreenIntent handleMainMenu(Scanner sc) {
 
         final int MENU_SIZE = menuList.size();
         final int EXIT_INDEX = 0;
@@ -74,7 +68,7 @@ public class Kiosk {
     }
 
 
-    private ScreenIntent handleCheckoutOrder(Scanner sc) {
+    public ScreenIntent handleCheckoutOrder(Scanner sc) {
         ScreenIntent nextScreen = new ScreenIntent(Screen.MAIN);
         if (cart.isCartEmpty()) {
             return nextScreen;
@@ -129,7 +123,7 @@ public class Kiosk {
     }
 
 
-    private ScreenIntent handleUpdateOrder(Scanner sc) {
+    public ScreenIntent handleUpdateOrder(Scanner sc) {
 
         if (cart.isCartEmpty()) {
             console.printInfo("장바구니에 남은 메뉴가 없어 메인 화면으로 돌아갑니다.");
@@ -181,10 +175,10 @@ public class Kiosk {
 
     }
 
-    private ScreenIntent handleSelectMenu(Scanner sc, ScreenIntent curIntent) {
+    public ScreenIntent handleSelectMenu(Scanner sc, ScreenIntent curIntent) {
         ScreenIntent nextScreen = new ScreenIntent(Screen.MAIN);
 
-        Menu selectedMenu = menuList.get(curIntent.getData() - 1);
+        Menu selectedMenu = menuList.get(curIntent.getIdxData() - 1);
         List<MenuItem> menuItemList = selectedMenu.getMenuItems();
 
         console.displaySelectMenu(selectedMenu, menuItemList);
@@ -200,7 +194,7 @@ public class Kiosk {
         if (isConfirmed) {
             addItemToCart(selectedItem);
         }
-        return new ScreenIntent(Screen.MENU_DETAIL, curIntent.getData());
+        return new ScreenIntent(Screen.MENU_DETAIL, curIntent.getIdxData());
     }
 
 
