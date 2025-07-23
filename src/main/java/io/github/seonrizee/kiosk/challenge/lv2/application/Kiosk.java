@@ -159,18 +159,20 @@ public class Kiosk {
 
         MenuItem selectedItem = cartItem.getItem();
 
-        if (selectedIdx == 1) {
-            if (cart.addItem(selectedItem)) {
-                console.printInfo(selectedItem.getName() + "이(가) 의 수량을 1개 추가했습니다.");
-            }
-        } else if (selectedIdx == 2) {
-            if (cart.decreaseItem(selectedItem)) {
-                console.printInfo(selectedItem.getName() + "이(가) 의 수량을 1개 감소했습니다.");
-            }
-        } else if (selectedIdx == 3) {
-            if (cart.removeItem(selectedItem)) {
+        try {
+            if (selectedIdx == 1) {
+                cart.addItem(selectedItem);
+                console.printInfo(selectedItem.getName() + "의 수량을 1개 추가했습니다.");
+            } else if (selectedIdx == 2) {
+                cart.decreaseItem(selectedItem);
+                console.printInfo(selectedItem.getName() + "의 수량을 1개 감소했습니다.");
+
+            } else if (selectedIdx == 3) {
+                cart.removeItem(selectedItem);
                 console.printInfo(selectedItem.getName() + "을(를) 장바구니에서 삭제했습니다.");
             }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            console.printError(e.getMessage());
         }
 
     }

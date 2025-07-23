@@ -8,36 +8,31 @@ public class Cart {
 
     private final Map<String, CartItem> cartItems = new LinkedHashMap<>();
 
-    public boolean addItem(MenuItem menuItem) {
+    public void addItem(MenuItem menuItem) {
 
         String itemName = menuItem.getName();
-        CartItem cartItem = cartItems.get(itemName);
-
-        if (cartItem == null) {
-            cartItem = new CartItem(menuItem);
-            cartItems.put(itemName, cartItem);
-            return true;
-        }
-
+        CartItem cartItem = cartItems.computeIfAbsent(itemName, name -> new CartItem(menuItem));
         cartItem.increaseQuantity();
-        return true;
     }
 
-    public boolean removeItem(MenuItem menuItem) {
+    public void removeItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
-        return cartItems.remove(itemName) != null;
+        if (cartItems.remove(itemName) == null) {
+            throw new IllegalArgumentException("장바구니에 해당 아이템이 없습니다: " + itemName);
+        }
     }
 
-    public boolean decreaseItem(MenuItem menuItem) {
+    public void decreaseItem(MenuItem menuItem) {
         String itemName = menuItem.getName();
         CartItem cartItem = cartItems.get(itemName);
+        if (cartItem == null) {
+            throw new IllegalArgumentException("장바구니에 해당 아이템이 없습니다: " + itemName);
+        }
 
         cartItem.decreaseQuantity();
         if (cartItem.getQuantity() == 0) {
             removeItem(menuItem);
         }
-
-        return true;
     }
 
     public int getCartTotalPrice() {
