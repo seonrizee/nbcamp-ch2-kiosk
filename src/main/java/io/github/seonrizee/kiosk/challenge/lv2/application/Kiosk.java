@@ -124,15 +124,10 @@ public class Kiosk {
         double discountedPrice = cartTotalPrice - cartTotalPrice * dcType.getDcRate();
         int oneEliminatedPrice = (int) (Math.floor(discountedPrice / 10) * 10);
 
-        String formattedOriginalPrice = String.format("%,d", cartTotalPrice);
-        String formattedPrice = String.format("%,d", oneEliminatedPrice);
-
-        console.printNewLine();
-        console.printInfo("할일 전 가격: " + formattedOriginalPrice + "원");
-        console.printInfo("할인 후 가격: " + formattedPrice + "원");
-        console.printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
+        console.displayOrderCompletion(dcType, cartTotalPrice, oneEliminatedPrice);
         cart.clearCart();
     }
+
 
     private ScreenIntent handleUpdateOrder(Scanner sc) {
 

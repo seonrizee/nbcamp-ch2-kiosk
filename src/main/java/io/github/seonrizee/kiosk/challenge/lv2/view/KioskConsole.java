@@ -2,6 +2,7 @@ package io.github.seonrizee.kiosk.challenge.lv2.view;
 
 import io.github.seonrizee.kiosk.challenge.lv2.domain.Cart;
 import io.github.seonrizee.kiosk.challenge.lv2.domain.CartItem;
+import io.github.seonrizee.kiosk.challenge.lv2.domain.Discount;
 import io.github.seonrizee.kiosk.challenge.lv2.domain.Menu;
 import io.github.seonrizee.kiosk.challenge.lv2.domain.MenuItem;
 import java.util.List;
@@ -90,6 +91,15 @@ public class KioskConsole {
         String formattedPrice = String.format("%,d", cart.getCartTotalPrice());
         printLine();
         printInfo("총 가격: " + formattedPrice + "원");
+    }
+
+    public void displayOrderCompletion(Discount dcType, int cartTotalPrice, int oneEliminatedPrice) {
+        String formattedOriginalPrice = String.format("%,d", cartTotalPrice);
+        String formattedPrice = String.format("%,d", oneEliminatedPrice);
+        printNewLine();
+        printInfo("할일 이전 금액: " + formattedOriginalPrice + "원");
+        printInfo("할인 적용 금액: " + formattedPrice + "원 | 할인율: " + (dcType.getDcRate() * 100) + "% (원 단위 절사)");
+        printInfo("주문이 완료되었습니다. " + formattedPrice + "원이 결제되었습니다. 감사합니다.");
     }
 
     public void displayTwoOptions() {
