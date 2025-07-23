@@ -15,7 +15,11 @@ public class CartItem {
     }
 
     public void decreaseQuantity() {
-        this.quantity -= 1;
+        if (this.quantity > 0) {
+            this.quantity -= 1;
+        } else {
+            throw new IllegalStateException("수량은 0보다 작을 수 없습니다.");
+        }
     }
 
     public MenuItem getItem() {
