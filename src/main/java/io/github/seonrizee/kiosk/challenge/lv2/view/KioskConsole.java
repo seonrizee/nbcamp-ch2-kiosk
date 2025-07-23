@@ -36,13 +36,13 @@ public class KioskConsole {
     }
 
 
-    public void displayMainOpening(int CHECKOUT_INDEX, Cart cart, List<Menu> menuList) {
+    public void displayMainOpening(int CHECKOUT_INDEX, List<Menu> menuList, boolean displayOrderMenu) {
         printNewLine();
         printLine();
         printInfo("Welcome to Five Guys");
         printTitle("MAIN MENU");
         displayMenuList(menuList);
-        if (!cart.isCartEmpty()) {
+        if (displayOrderMenu) {
             displayOrderMenu(CHECKOUT_INDEX);
         }
         printInfo("0. 종료");

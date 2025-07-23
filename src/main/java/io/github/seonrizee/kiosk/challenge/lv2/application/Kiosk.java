@@ -48,7 +48,7 @@ public class Kiosk {
         final int UPDATE_INDEX = CHECKOUT_INDEX + 1;
         final int LIMIT_INDEX = UPDATE_INDEX;
 
-        console.displayMainOpening(CHECKOUT_INDEX, cart, menuList);
+        console.displayMainOpening(CHECKOUT_INDEX, menuList, !cart.isCartEmpty());
         int selectedIdx;
         if (!cart.isCartEmpty()) {
             selectedIdx = console.getUserInput(sc, EXIT_INDEX, LIMIT_INDEX);
