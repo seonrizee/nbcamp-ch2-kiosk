@@ -27,7 +27,7 @@ public class Kiosk {
 
             while (curIntent.getNextScreen() != Screen.EXIT) {
                 curIntent = curIntent.getNextScreen()
-                        .processScreen(this, sc, curIntent);
+                        .executeScreen(this, sc, curIntent);
             }
 
         }

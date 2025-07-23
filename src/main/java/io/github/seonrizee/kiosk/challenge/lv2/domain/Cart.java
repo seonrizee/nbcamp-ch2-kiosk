@@ -11,8 +11,14 @@ public class Cart {
     public void addItem(MenuItem menuItem) {
 
         String itemName = menuItem.getName();
-        CartItem cartItem = cartItems.computeIfAbsent(itemName, name -> new CartItem(menuItem));
-        cartItem.increaseQuantity();
+        cartItems.compute(itemName, (curName, curItem) -> {
+            if (curItem == null) {
+                return new CartItem(menuItem);
+            } else {
+                curItem.increaseQuantity();
+                return curItem;
+            }
+        });
     }
 
     public void removeItem(MenuItem menuItem) {
