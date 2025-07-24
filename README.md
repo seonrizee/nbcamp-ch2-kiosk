@@ -187,7 +187,10 @@
 - **장바구니의 내용을 업데이트하고 난 뒤 return은 필요할까?**
     - 상황에 따라 결정하며, 업데이트가 이뤄진 전체 객체 반환 및 boolean 형식의 값 사용
     - Level 2 리팩토링 과정에서는 boolean은 제거하고 업데이트에 실패하는 경우는 Exception으로 처리
-
+- **사용자 입력 처리의 중복 제거를 위한 메서드 구현**
+    - 기능이 많아지면서 사용자에게 입력받는 부분과 관련된 처리 등 중복된 코드가 많아짐
+    - 추상화하여 `getUserInput(Scanner sc, int minValidIdx, int maxValidIdx)` 메서드 구현
+      
 [도전 기능 Level 2 회고](https://seonrizee.github.io/blog/2025-07-24-ch2-kiosk-challenge-2/)
 
 - **복잡한 UI 흐름과 중첩된`while`:`Enum`과`Intent`객체로 Kiosk 제어 개선하기**
