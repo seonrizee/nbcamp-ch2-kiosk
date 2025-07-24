@@ -193,6 +193,24 @@ public class KioskConsole {
         printInfo("총 가격: " + formattedPrice + "원");
     }
 
+
+    /**
+     * 할인 정책의 목룍을 화면에 표시합니다.
+     *
+     * @param availableDiscounts 표시할 할인 정책의 리스트
+     */
+    public void displayConfirmDiscount(List<Discount> availableDiscounts) {
+        int idx = 1;
+        for (Discount discount : availableDiscounts) {
+            String formattedDiscountRate = String.format("%d. %-6s: %.0f%% 할인", idx++, discount.getDesc(),
+                    discount.getDcRate() * 100);
+            printInfo(formattedDiscountRate);
+        }
+
+        printInfo("0. 뒤로 가기");
+        printInput("할인 정보를 확인하시고 번호를 입력해주세요.: ");
+    }
+
     /**
      * 주문 완료 및 결제 내역을 화면에 표시합니다.
      *
