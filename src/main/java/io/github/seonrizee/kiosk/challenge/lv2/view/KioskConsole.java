@@ -92,6 +92,9 @@ public class KioskConsole {
 
     /**
      * 장바구니에 담긴 모든 아이템 리스트를 화면에 표시합니다.
+     * <p>
+     * 인덱스가 필요하여 Stream 보다 for문이 더 적절하다고 생각하나, 과제 요구사항 및 연습을 위해 Stream을 사용했습니다.
+     * </p>
      *
      * @param cartItems 표시할 {@link CartItem} 리스트
      */
@@ -114,6 +117,9 @@ public class KioskConsole {
 
     /**
      * 메인 메뉴의 카테고리 리스트를 화면에 표시합니다.
+     * <p>
+     * 인덱스가 필요하여 Stream 보다 for문이 더 적절하다고 생각하나, 과제 요구사항 및 연습을 위해 Stream을 사용했습니다.
+     * </p>
      *
      * @param menuList 표시할 {@link Menu} 리스트
      */
@@ -124,6 +130,9 @@ public class KioskConsole {
 
     /**
      * 특정 카테고리에 속한 모든 메뉴 아이템 리스트를 화면에 표시합니다.
+     * <p>
+     * 인덱스가 필요하여 Stream 보다 for문이 더 적절하다고 생각하나, 과제 요구사항 및 연습을 위해 Stream을 사용했습니다.
+     * </p>
      *
      * @param menuItems 표시할 {@link MenuItem} 리스트
      */
