@@ -123,16 +123,8 @@ public class Kiosk {
     private Discount confirmDiscount(Scanner sc) {
         console.printNewLine();
 
-        int idx = 1;
         List<Discount> availableDiscounts = Discount.getAvailableDiscounts();
-        for (Discount discount : availableDiscounts) {
-            String formattedDiscountRate = String.format("%d. %-6s: %.0f%% 할인", idx++, discount.getDesc(),
-                    discount.getDcRate() * 100);
-            console.printInfo(formattedDiscountRate);
-        }
-
-        console.printInfo("0. 뒤로 가기");
-        console.printInput("할인 정보를 확인하시고 번호를 입력해주세요.: ");
+        console.displayConfirmDiscount(availableDiscounts);
 
         int selectedDiscountIdx = console.getUserInput(sc, EXIT_INDEX, availableDiscounts.size());
         if (selectedDiscountIdx == EXIT_INDEX) {
