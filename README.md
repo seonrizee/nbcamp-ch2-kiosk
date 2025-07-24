@@ -19,7 +19,7 @@
 ### 주요 기능
 
 1. **사용자 입력 기반의 화면 흐름 관리**
-    - 사용자 입력 → 다음 화면 및 데이터 전달 → 화면 및 데이터 갱신 (`Android`의 `Intent`개념과 유사)
+    - 사용자 입력 → 화면 및 데이터 갱신
 2. **상품 추가 기능**
     - 메뉴별 카테고리 및 상세 메뉴 확인
     - 선택한 메뉴아이템에 대한 장바구니 추가 전 확인 절차 존재
@@ -58,7 +58,7 @@
 
 - **Language**: `Java 17`
 - **Concepts**: `Object-Oriented Programming`, `State Machine Pattern`
-- **APIs**: `Lambda & Stream API`, `Collections Framework (LinkedHashMap)`, `Enum`
+- **APIs**: `Lambda & Stream API`, `Collections Framework (Map, List)`, `Enum`
 - **Exception Handling**
 
 ## 4. 프로젝트 구조 및 실행 방법
